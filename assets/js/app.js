@@ -4,9 +4,9 @@ var svgHeight = 500;
 
 var margin = {
   top: 20,
-  right: 40,
+  right: 20,
   bottom: 60,
-  left: 100
+  left: 50
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -39,23 +39,31 @@ d3.csv('assets/data/data.csv')
     // ==============================
     var xLinearScale = d3.scaleLinear()
       .domain([8, d3.max(newsData, d => d.poverty)])
-      .range([0, width]);
+      .range([0, width])
+      ;
 
     var yLinearScale = d3.scaleLinear()
       .domain([0, d3.max(newsData, d => d.healthcare)])
-      .range([height, 0]);
+      .range([height, 0])
+      ;
 
 
           // Step 3: Create axis functions
     // ==============================
-    var bottomAxis = d3.axisBottom(xLinearScale);
-    var leftAxis = d3.axisLeft(yLinearScale);
+    //the state abbr only show up with ticks(0)
+    var bottomAxis = d3.axisBottom(xLinearScale)
+    .ticks(0)
+    ;
+    var leftAxis = d3.axisLeft(yLinearScale)
+    .ticks(0)
+    ;
 
     // Step 4: Append Axes to the chart
     // ==============================
     chartGroup.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
+    
 
     chartGroup.append("g")
       .call(leftAxis);
@@ -80,27 +88,27 @@ d3.csv('assets/data/data.csv')
 
     //Add svg text element attributes
     var textLabels = text   
-    .attr("x", d => xLinearScale(d.poverty))
-    .attr("y", d => yLinearScale(d.healthcare))
+    .attr("x", d => xLinearScale(d.poverty-.1))
+    .attr("y", d => yLinearScale(d.healthcare-0.1))
+    // .attr("x", xLinearScale(1))
+    // .attr("y", yLinearScale(10))
     .text (d=>d.abbr)
     .attr("font-family","sans-serif")
     .attr("font-size","10px")
-    .attr("fill","black");
+    .attr("fill","black")
+    ;
 
       // Create axes labels
     chartGroup.append("text")
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left + 40)
+    .attr("y", 0 - margin.left + 10)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("class", "axisText")
-    .text("Poverty");
+    .text("Poverty(%)");
 
-  chartGroup.append("text")
+    chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
     .attr("class", "axisText")
-    .text("Healthcare");
-
-
-    
+    .text("Healthcare(%)");
 });
